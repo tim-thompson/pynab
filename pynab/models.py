@@ -19,7 +19,9 @@ class PynabResourceDoesNotExist(PynabException):
     pass
 
 
+# TODO: Handle iteration error better
 def get_from_list(list_search, key, value):
+    """Return the first element of a list where the key parameter of the list equals the value parameter."""
     return next(element for element in list_search if getattr(element, key) == value)
 
 
@@ -248,7 +250,6 @@ class Budget:
             for scheduled_subtransaction in data.get("scheduled_subtransactions")
         ]
 
-    # TODO: For each call to retrieve an element from a list handle the StopIteration exception better
     def account(self, account_id):
         return get_from_list(self.accounts, "id", account_id)
 

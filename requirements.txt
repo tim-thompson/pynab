@@ -5,12 +5,13 @@ black==18.9b0
 certifi==2018.10.15
 chardet==3.0.4
 Click==7.0
+coverage==4.5.2
 idna==2.7
 more-itertools==4.3.0
 multidict==4.4.2
 pluggy==0.8.0
 py==1.7.0
-pytest==3.10.0
+pytest==4.0.0
 PyYAML==3.13
 requests==2.20.0
 six==1.11.0
