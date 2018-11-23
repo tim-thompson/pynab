@@ -1,0 +1,29 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.20.0]
+    method: GET
+    uri: https://api.youneedabudget.com/v1/budgets/string/settings
+  response:
+    body: {string: "{\"data\":{\"settings\":{\"date_format\":{\"format\":\"string\"},\"currency_format\":{\"iso_code\":\"string\",\"example_format\":\"string\",\"decimal_digits\":0,\"decimal_separator\":\"string\",\"symbol_first\":true,\"group_separator\":\"string\",\"currency_symbol\":\"string\",\"display_symbol\":true}}}}"}
+    headers:
+      Cache-Control: ['max-age=0, private, must-revalidate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 20 Nov 2018 22:41:30 GMT']
+      Etag: [W/"dedccc0121dc230f95e0e02a03547dfe"]
+      Server: [Cowboy]
+      Strict-Transport-Security: [max-age=15552000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: ['Accept-Encoding, Origin']
+      Via: [1.1 vegur]
+      X-Rate-Limit: [12/200]
+      X-Request-Id: [b35909f1-51ca-41f1-b195-ad927e83fefd]
+      X-Runtime: ['0.023162']
+      content-length: ['258']
+    status: {code: 200, message: OK}
+version: 1
