@@ -22,7 +22,7 @@ def ynab():
 @pynab_vcr.use_cassette()
 def test_user_info(ynab):
     """Tests an API call to get information about authenticated user"""
-    assert ynab.user.user_id == "string"
+    assert ynab.user.id == "string"
 
 
 @pynab_vcr.use_cassette()
@@ -33,11 +33,10 @@ def test_budgets_summary_list(ynab):
     assert isinstance(budgets_summary, list)
 
 
-@pynab_vcr.use_cassette()
+@pynab_vcr.use_cassette("cassettes/full_budget")
 def test_get_single_budget_full(ynab):
     """Tests an API call to get a full budget export of a single budget by ID"""
     budget = ynab.budget("string")
-    print(budget.accounts)
     assert isinstance(budget, models.Budget)
 
 
@@ -51,3 +50,13 @@ def test_get_single_budget_settings(ynab):
     assert settings.date_format == "string"
     assert settings.currency_format.decimal_digits == 0
     assert settings.currency_format.display_symbol is True
+
+
+@pynab_vcr.use_cassette("cassettes/full_budget")
+def test_get_account_by_account_id_from_budget(ynab):
+    """Tests that an account can be retrieved from a Budget object by ID"""
+    budget = ynab.budget("string")
+    account = budget.account("string")
+    assert isinstance(account, models.Account)
+    sch = budget.scheduled_transaction("string")
+    assert isinstance(sch, models.ScheduledTransaction)

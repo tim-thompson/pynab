@@ -9,11 +9,7 @@ class Pynab:
     def __init__(self, access_token):
         self.access_token = access_token
         self.session = requests.Session()
-        self.session.headers.update(
-            {
-                "Authorization": f"Bearer {access_token}"
-            }
-        )
+        self.session.headers.update({"Authorization": f"Bearer {access_token}"})
 
     def __repr__(self):
         return f"Pynab({self.access_token})"

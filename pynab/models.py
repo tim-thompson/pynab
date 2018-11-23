@@ -1,4 +1,4 @@
-from collections import namedtuple
+from dataclasses import dataclass
 
 
 class PynabException(Exception):
@@ -14,19 +14,22 @@ class PynabAuthenticationException(PynabException):
 
 
 class PynabResourceDoesNotExist(PynabException):
+    """Exception raised when a requested resource is not found"""
+
     pass
 
 
-class PynabFactory:
-    def __init__(self):
-        pass
+def get_from_list(list_search, key, value):
+    return next(element for element in list_search if getattr(element, key) == value)
 
+
+class PynabFactory:
     @staticmethod
     def parse(json, budget_id=None):
         if "error" in json:
             raise PynabException
         elif "user" in json["data"]:
-            return User(id=json["data"]["user"]["id"])
+            return User(json["data"]["user"]["id"])
         elif "budgets" in json["data"]:
             return [BudgetSummary(**summary) for summary in json["data"]["budgets"]]
         elif "budget" in json["data"]:
@@ -35,155 +38,182 @@ class PynabFactory:
             return BudgetSettings(budget_id, **json["data"]["settings"])
 
 
+@dataclass
 class User:
-    def __init__(self, **data):
-        self.user_id = data.get("id")
+    """Data Class to represent User data returned by YNAB API"""
 
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.user_id})"
+    id: str
 
 
-CurrencyFormat = namedtuple(
-    "CurrencyFormat",
-    [
-        "iso_code",
-        "example_format",
-        "decimal_digits",
-        "decimal_separator",
-        "symbol_first",
-        "group_separator",
-        "currency_symbol",
-        "display_symbol",
-    ],
-)
-Account = namedtuple(
-    "Account",
-    [
-        "id",
-        "name",
-        "type",
-        "on_budget",
-        "closed",
-        "note",
-        "balance",
-        "cleared_balance",
-        "uncleared_balance",
-        "transfer_payee_id",
-        "deleted",
-    ],
-)
-Payee = namedtuple("Payee", ["id", "name", "transfer_account_id", "deleted"])
-PayeeLocation = namedtuple(
-    "PayeeLocation", ["id", "payee_id", "latitude", "longitude", "deleted"]
-)
-CategoryGroup = namedtuple("CategoryGroup", ["id", "name", "hidden", "deleted"])
-Category = namedtuple(
-    "Category",
-    [
-        "id",
-        "category_group_id",
-        "name",
-        "hidden",
-        "original_category_group_id",
-        "note",
-        "budgeted",
-        "activity",
-        "balance",
-        "goal_type",
-        "goal_creation_month",
-        "goal_target",
-        "goal_target_month",
-        "goal_percentage_complete",
-        "deleted",
-    ],
-)
-Transaction = namedtuple(
-    "Transaction",
-    [
-        "id",
-        "date",
-        "amount",
-        "memo",
-        "cleared",
-        "approved",
-        "flag_color",
-        "account_id",
-        "payee_id",
-        "category_id",
-        "transfer_account_id",
-        "transfer_transaction_id",
-        "import_id",
-        "deleted",
-    ],
-)
-Subtransaction = namedtuple(
-    "Subtransaction",
-    [
-        "id",
-        "transaction_id",
-        "amount",
-        "memo",
-        "payee_id",
-        "category_id",
-        "transfer_account_id",
-        "deleted",
-    ],
-)
-ScheduledTransaction = namedtuple(
-    "ScheduledTransaction",
-    [
-        "id",
-        "date_first",
-        "date_next",
-        "frequency",
-        "amount",
-        "memo",
-        "flag_color",
-        "account_id",
-        "payee_id",
-        "category_id",
-        "transfer_account_id",
-        "deleted",
-    ],
-)
-ScheduledSubtransaction = namedtuple(
-    "ScheduledSubtransaction",
-    [
-        "id",
-        "scheduled_transaction_id",
-        "amount",
-        "memo",
-        "payee_id",
-        "category_id",
-        "transfer_account_id",
-        "deleted",
-    ],
-)
+@dataclass
+class CurrencyFormat:
+    """Data Class to represent Currency Format data returned by YNAB API"""
+
+    iso_code: str
+    example_format: str
+    decimal_digits: int
+    decimal_separator: str
+    symbol_first: bool
+    group_separator: str
+    currency_symbol: str
+    display_symbol: str
 
 
+@dataclass
+class Account:
+    """Data Class to represent Account data returned by YNAB API"""
+
+    id: str
+    name: str
+    type: str
+    on_budget: bool
+    closed: bool
+    note: str
+    balance: int
+    cleared_balance: int
+    uncleared_balance: int
+    transfer_payee_id: str
+    deleted: bool
+
+
+@dataclass
+class Payee:
+    """Data Class to represent Payee data returned by YNAB API"""
+
+    id: str
+    name: str
+    transfer_account_id: str
+    deleted: bool
+
+
+@dataclass
+class PayeeLocation:
+    """Data Class to represent Payee Location data returned by YNAB API"""
+
+    id: str
+    payee_id: str
+    latitude: str
+    longitude: str
+    deleted: bool
+
+
+@dataclass
+class CategoryGroup:
+    """Data Class to represent Category Group data returned by YNAB API"""
+
+    id: str
+    name: str
+    hidden: bool
+    deleted: bool
+
+
+@dataclass
+class Category:
+    """Data Class to represent Category data returned by YNAB API"""
+
+    id: str
+    category_group_id: str
+    name: str
+    hidden: bool
+    original_category_group_id: str
+    note: str
+    budgeted: int
+    activity: int
+    balance: int
+    goal_type: str
+    goal_creation_month: str
+    goal_target: int
+    goal_target_month: str
+    goal_percentage_complete: int
+    deleted: bool
+
+
+@dataclass
+class Transaction:
+    """Data Class to represent Transaction data returned by YNAB API"""
+
+    id: str
+    date: str
+    amount: int
+    memo: str
+    cleared: bool
+    approved: bool
+    flag_color: str
+    account_id: str
+    payee_id: str
+    category_id: str
+    transfer_account_id: str
+    transfer_transaction_id: str
+    import_id: str
+    deleted: bool
+
+
+@dataclass
+class Subtransaction:
+    """Data Class to represent Subtransaction data returned from YNAB API"""
+
+    id: str
+    transaction_id: str
+    amount: int
+    memo: str
+    payee_id: str
+    category_id: str
+    transfer_account_id: str
+    deleted: bool
+
+
+@dataclass
+class ScheduledTransaction:
+    """Data Class to represent Scheduled Transaction Data returned from YNAB API"""
+
+    id: str
+    date_first: str
+    date_next: str
+    frequency: str
+    amount: int
+    memo: str
+    flag_color: str
+    account_id: str
+    payee_id: str
+    category_id: str
+    transfer_account_id: str
+    deleted: bool
+
+
+@dataclass
+class ScheduledSubtransaction:
+    """Data Class to represent Scheduled Subtransaction data returned from YNAB API"""
+
+    id: str
+    scheduled_transaction_id: str
+    amount: int
+    memo: str
+    payee_id: str
+    category_id: str
+    transfer_account_id: str
+    deleted: bool
+
+
+@dataclass
 class Month:
-    def __init__(
-        self,
-        month,
-        note,
-        income,
-        budgeted,
-        activity,
-        to_be_budgeted,
-        age_of_money,
-        categories,
-    ):
-        self.month = month
-        self.note = note
-        self.income = income
-        self.budgeted = budgeted
-        self.activity = activity
-        self.to_be_budgeted = to_be_budgeted
-        self.age_of_money = age_of_money
-        self.categories = [Category(**category) for category in categories]
+    """Data Class to represent Month data returned from YNAB API"""
+
+    month: str
+    note: str
+    income: int
+    budgeted: int
+    activity: int
+    to_be_budgeted: int
+    age_of_money: int
+    categories: dict
+
+    def __post_init__(self):
+        self.categories = [Category(**category) for category in self.categories]
 
 
 class Budget:
+    """Class to represent Budget data returned from YNAB API"""
+
     def __init__(self, budget_id, **data):
         self.budget_id = budget_id
         self.name = data.get("name")
@@ -218,26 +248,27 @@ class Budget:
             for scheduled_subtransaction in data.get("scheduled_subtransactions")
         ]
 
+    # TODO: For each call to retrieve an element from a list handle the StopIteration exception better
     def account(self, account_id):
-        account = [account for account in self.accounts if account.id == account_id]
-        if len(account) == 0:
-            raise PynabResourceDoesNotExist()
-        return account
+        return get_from_list(self.accounts, "id", account_id)
 
     def category(self, category_id):
-        pass
+        return get_from_list(self.categories, "id", category_id)
 
     def update_category(self, category):
         pass
 
     def payee(self, payee_id):
-        pass
+        return get_from_list(self.payees, "id", payee_id)
 
     def payee_location(self, payee_location_id):
-        pass
+        return get_from_list(self.payee_locations, "id", payee_location_id)
 
     def month(self, month):
-        pass
+        return get_from_list(self.months, "month", month)
+
+    def transaction(self, transaction_id):
+        return get_from_list(self.transactions, "id", transaction_id)
 
     def new_transaction(self):
         pass
@@ -246,19 +277,25 @@ class Budget:
         pass
 
     def scheduled_transaction(self, scheduled_transaction_id):
-        pass
+        return get_from_list(
+            self.scheduled_transactions, "id", scheduled_transaction_id
+        )
 
 
+@dataclass
 class BudgetSummary:
-    def __init__(self, **data):
-        self.id = data.get("id")
-        self.name = data.get("name")
-        self.last_modified_on = data.get("last_modified_on")
-        self.date_format = data.get("date_format").get("format")
-        self.currency_format = CurrencyFormat(**data.get("currency_format"))
+    """Data Class to represent Budget Summary data returned from YNAB API"""
+
+    id: str
+    name: str
+    last_modified_on: str
+    date_format: str
+    currency_format: CurrencyFormat
 
 
 class BudgetSettings:
+    """Class to represent Budget Settings data returned from YNAB API"""
+
     def __init__(self, budget_id, **data):
         self.budget_id = budget_id
         self.date_format = data.get("date_format").get("format")
