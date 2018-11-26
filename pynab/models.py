@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 
 from pynab.exceptions import (
-    PynabException,
-    PynabAuthenticationException,
+    PynabError,
+    PynabAuthenticationError,
     PynabResourceDoesNotExist,
-    PynabRateLimitExceededException,
+    PynabRateLimitExceededError,
+    PynabBadRequestError,
 )
 
 
@@ -14,33 +15,39 @@ def get_from_list(list_search, key, value):
     return next(element for element in list_search if getattr(element, key) == value)
 
 
+def handle_error_response(error):
+    if error["name"] == "bad_request":
+        raise PynabBadRequestError(
+            "YNAB returned a bad request. This is likely a Pynab bug, please report on GitHub"
+        )
+    elif error["name"] == "not_authorized":
+        raise PynabAuthenticationError(
+            "Authentication with access token failed"
+        )
+    elif error["name"] == "subscription_lapsed":
+        pass
+    elif error["name"] == "trial_expired":
+        pass
+    elif error["name"] == "not_found":
+        pass
+    elif error["name"] == "resource_not_found":
+        raise PynabResourceDoesNotExist
+    elif error["name"] == "conflict":
+        pass
+    elif error["name"] == "too_many_requests":
+        raise PynabRateLimitExceededError(
+            "Rate limit exceeded, too many requests"
+        )
+    elif error["name"] == "internal_server_error":
+        pass
+    raise PynabError("An unexpected error occurred")
+
+
 class PynabFactory:
     @staticmethod
     def parse(json, budget_id=None):
         if "error" in json:
-            if json["error"]["name"] == "bad_request":
-                pass
-            elif json["error"]["name"] == "not_authorized":
-                raise PynabAuthenticationException(
-                    "Authentication with access token failed"
-                )
-            elif json["error"]["name"] == "subscription_lapsed":
-                pass
-            elif json["error"]["name"] == "trial_expired":
-                pass
-            elif json["error"]["name"] == "not_found":
-                pass
-            elif json["error"]["name"] == "resource_not_found":
-                raise PynabResourceDoesNotExist
-            elif json["error"]["name"] == "conflict":
-                pass
-            elif json["error"]["name"] == "too_many_requests":
-                raise PynabRateLimitExceededException(
-                    "Rate limit exceeded, too many requests"
-                )
-            elif json["error"]["name"] == "internal_server_error":
-                pass
-            raise PynabException("An unexpected error occurred")
+            handle_error_response(json["error"])
         elif "user" in json["data"]:
             return User(json["data"]["user"]["id"])
         elif "budgets" in json["data"]:
