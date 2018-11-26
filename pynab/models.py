@@ -3,9 +3,12 @@ from dataclasses import dataclass
 from pynab.exceptions import (
     PynabError,
     PynabAuthenticationError,
-    PynabResourceDoesNotExist,
+    PynabNotFoundError,
     PynabRateLimitExceededError,
     PynabBadRequestError,
+    PynabAccountError,
+    PynabConflictError,
+    PynabInternalServerError,
 )
 
 
@@ -22,24 +25,32 @@ def handle_error_response(error):
         )
     elif error["name"] == "not_authorized":
         raise PynabAuthenticationError(
-            "Authentication with access token failed"
+            "Authentication with access token failed, check your access token"
         )
     elif error["name"] == "subscription_lapsed":
-        pass
-    elif error["name"] == "trial_expired":
-        pass
-    elif error["name"] == "not_found":
-        pass
-    elif error["name"] == "resource_not_found":
-        raise PynabResourceDoesNotExist
-    elif error["name"] == "conflict":
-        pass
-    elif error["name"] == "too_many_requests":
-        raise PynabRateLimitExceededError(
-            "Rate limit exceeded, too many requests"
+        raise PynabAccountError(
+            "Subscription lapsed, API access requires an active subscription or trial"
         )
+    elif error["name"] == "trial_expired":
+        raise PynabAccountError(
+            "Trial expired, API access requires an active subscription or trial"
+        )
+    elif error["name"] == "not_found":
+        raise PynabNotFoundError(
+            "URI not found. This is likely a Pynab bug, please report on GitHub"
+        )
+    elif error["name"] == "resource_not_found":
+        raise PynabNotFoundError("Requested resource not found")
+    elif error["name"] == "conflict":
+        raise PynabConflictError(
+            "Could not complete operation, conflict with existing resource"
+        )
+    elif error["name"] == "too_many_requests":
+        raise PynabRateLimitExceededError("Rate limit exceeded, too many requests")
     elif error["name"] == "internal_server_error":
-        pass
+        raise PynabInternalServerError(
+            "An internal server error occurred. This is a YNAB problem, try again later"
+        )
     raise PynabError("An unexpected error occurred")
 
 
