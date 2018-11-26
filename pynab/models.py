@@ -224,6 +224,29 @@ class Month:
         self.categories = [Category(**category) for category in self.categories]
 
 
+@dataclass
+class BudgetSummary:
+    """Data Class to represent Budget Summary data returned from YNAB API"""
+
+    id: str
+    name: str
+    last_modified_on: str
+    date_format: str
+    currency_format: CurrencyFormat
+
+
+class BudgetSettings:
+    """Class to represent Budget Settings data returned from YNAB API"""
+
+    def __init__(self, budget_id, **data):
+        self.budget_id = budget_id
+        self.date_format = data.get("date_format").get("format")
+        self.currency_format = CurrencyFormat(**data.get("currency_format"))
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.budget_id})"
+
+
 class Budget:
     """Class to represent Budget data returned from YNAB API"""
 
@@ -292,26 +315,3 @@ class Budget:
         return get_from_list(
             self.scheduled_transactions, "id", scheduled_transaction_id
         )
-
-
-@dataclass
-class BudgetSummary:
-    """Data Class to represent Budget Summary data returned from YNAB API"""
-
-    id: str
-    name: str
-    last_modified_on: str
-    date_format: str
-    currency_format: CurrencyFormat
-
-
-class BudgetSettings:
-    """Class to represent Budget Settings data returned from YNAB API"""
-
-    def __init__(self, budget_id, **data):
-        self.budget_id = budget_id
-        self.date_format = data.get("date_format").get("format")
-        self.currency_format = CurrencyFormat(**data.get("currency_format"))
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.budget_id})"
