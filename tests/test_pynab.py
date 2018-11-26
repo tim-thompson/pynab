@@ -2,6 +2,7 @@
 import pytest
 import vcr
 
+import pynab.exceptions
 from pynab import Pynab, models
 
 pynab_vcr = vcr.VCR(
@@ -17,6 +18,11 @@ def ynab():
     """Setup an instance of Pynab"""
     ynab = Pynab("auth_token")
     return ynab
+
+
+def test_no_auth_token():
+    with pytest.raises(pynab.exceptions.PynabAuthenticationException):
+        ynab = Pynab("")
 
 
 @pynab_vcr.use_cassette()
@@ -113,3 +119,10 @@ def test_get_scheduled_transaction_by_scheduled_transaction_id_from_budget(ynab)
     scheduled_transaction = budget.scheduled_transaction("string")
     assert isinstance(scheduled_transaction, models.ScheduledTransaction)
     assert scheduled_transaction.id == "string"
+
+
+@pynab_vcr.use_cassette()
+def test_rate_limit_exceeded(ynab):
+    """Tests that a rate limit exception is raised when rate limit is exceeded"""
+    with pytest.raises(pynab.exceptions.PynabRateLimitExceededException):
+        budget = ynab.user

@@ -1,22 +1,11 @@
 from dataclasses import dataclass
 
-
-class PynabException(Exception):
-    """Base exception class for Pynab"""
-
-    pass
-
-
-class PynabAuthenticationException(PynabException):
-    """Exception raised for authentication errors in a request"""
-
-    pass
-
-
-class PynabResourceDoesNotExist(PynabException):
-    """Exception raised when a requested resource is not found"""
-
-    pass
+from pynab.exceptions import (
+    PynabException,
+    PynabAuthenticationException,
+    PynabResourceDoesNotExist,
+    PynabRateLimitExceededException,
+)
 
 
 # TODO: Handle iteration error better
@@ -29,7 +18,29 @@ class PynabFactory:
     @staticmethod
     def parse(json, budget_id=None):
         if "error" in json:
-            raise PynabException
+            if json["error"]["name"] == "bad_request":
+                pass
+            elif json["error"]["name"] == "not_authorized":
+                raise PynabAuthenticationException(
+                    "Authentication with access token failed"
+                )
+            elif json["error"]["name"] == "subscription_lapsed":
+                pass
+            elif json["error"]["name"] == "trial_expired":
+                pass
+            elif json["error"]["name"] == "not_found":
+                pass
+            elif json["error"]["name"] == "resource_not_found":
+                raise PynabResourceDoesNotExist
+            elif json["error"]["name"] == "conflict":
+                pass
+            elif json["error"]["name"] == "too_many_requests":
+                raise PynabRateLimitExceededException(
+                    "Rate limit exceeded, too many requests"
+                )
+            elif json["error"]["name"] == "internal_server_error":
+                pass
+            raise PynabException("An unexpected error occurred")
         elif "user" in json["data"]:
             return User(json["data"]["user"]["id"])
         elif "budgets" in json["data"]:
