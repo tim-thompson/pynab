@@ -1,0 +1,56 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.20.0]
+    method: GET
+    uri: https://api.youneedabudget.com/v1/user
+  response:
+    body: {string: '{"data":{"user":{"id":"string"}}}'}
+    headers:
+      Cache-Control: ['max-age=0, private, must-revalidate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 27 Nov 2018 09:30:54 GMT']
+      Etag: [W/"919bbb2d36a151a9750c6db45ef92eb3"]
+      Server: [Cowboy]
+      Strict-Transport-Security: [max-age=15552000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: ['Accept-Encoding, Origin']
+      Via: [1.1 vegur]
+      X-Rate-Limit: [2/200]
+      X-Request-Id: [bdf936e8-6ab6-4603-96b5-0efaca791bbb]
+      X-Runtime: ['0.021250']
+      content-length: ['63']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.20.0]
+    method: GET
+    uri: https://api.youneedabudget.com/v1/user
+  response:
+    body: {string: '{"data":{"user":{"id":"cdfe986a-5ac4-41f6-a52e-4d1174640843"}}}'}
+    headers:
+      Cache-Control: ['max-age=0, private, must-revalidate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 27 Nov 2018 09:30:55 GMT']
+      Etag: [W/"919bbb2d36a151a9750c6db45ef92eb3"]
+      Server: [Cowboy]
+      Strict-Transport-Security: [max-age=15552000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: ['Accept-Encoding, Origin']
+      Via: [1.1 vegur]
+      X-Rate-Limit: [3/200]
+      X-Request-Id: [33f1fe83-41f4-4a92-80be-4afecc8d6af0]
+      X-Runtime: ['0.017344']
+      content-length: ['63']
+    status: {code: 200, message: OK}
+version: 1

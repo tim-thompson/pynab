@@ -18,10 +18,16 @@ def ynab():
     return ynab
 
 
-@pynab_vcr.use_cassette()
-def test_user_info(ynab):
+@pynab_vcr.use_cassette("./tests/cassettes/test_user_id")
+def test_user_id(ynab):
     """Tests an API call to get information about authenticated user"""
     assert ynab.user.id == "string"
+
+
+@pynab_vcr.use_cassette("./tests/cassettes/test_user_object")
+def test_user_object(ynab):
+    """Tests the user object is being created as intended"""
+    assert isinstance(ynab.user, models.User)
 
 
 @pynab_vcr.use_cassette()
