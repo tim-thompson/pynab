@@ -1,8 +1,7 @@
 import requests
 
-import pynab.exceptions
+from pynab.exceptions import PynabAuthenticationError, PynabConnectionError
 from pynab import models
-from pynab.exceptions import PynabConnectionError
 
 
 class Pynab:
@@ -10,7 +9,7 @@ class Pynab:
 
     def __init__(self, access_token: str):
         if access_token is None or len(access_token) == 0:
-            raise pynab.exceptions.PynabAuthenticationError("No access token specified")
+            raise PynabAuthenticationError("No access token specified")
         self.access_token = access_token
         self.session = requests.Session()
         self.session.headers.update({"Authorization": f"Bearer {access_token}"})
