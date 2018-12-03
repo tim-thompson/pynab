@@ -22,7 +22,7 @@ class Pynab:
     def user(self):
         """Gets information about the currently authenticated user
 
-        :rtype: pynab.models.User
+        :rtype: :class:`pynab.models.User`
         :return: a user object of the currently authenticated user
         """
         path = Pynab.base_url + "user"
