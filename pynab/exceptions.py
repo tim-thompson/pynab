@@ -47,3 +47,9 @@ class PynabInternalServerError(PynabError):
     """Exception raised when an internal server error is returned from the YNAB API"""
 
     pass
+
+
+class PynabConnectionError(PynabError):
+    """Exception raised when a connection fails to be made to the YNAB API"""
+
+    pass

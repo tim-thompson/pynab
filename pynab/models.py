@@ -23,7 +23,7 @@ def handle_error_response(error):
         raise PynabBadRequestError(
             "YNAB returned a bad request. This is likely a Pynab bug, please report on GitHub"
         )
-    elif error["name"] == "unauthorized":
+    elif error["name"] == "not_authorized":
         raise PynabAuthenticationError("Authentication with access token failed")
     elif error["name"] == "subscription_lapsed":
         raise PynabAccountError(

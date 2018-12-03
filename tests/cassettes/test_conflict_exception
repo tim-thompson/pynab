@@ -9,7 +9,7 @@ interactions:
     method: GET
     uri: https://api.youneedabudget.com/v1/user
   response:
-    body: {string: "{\"error\":{\"id\":\"429\",\"name\":\"too_many_requests\",\"detail\":\"Too many requests\"}}"}
+    body: {string: "{\"error\":{\"id\":\"409\",\"name\":\"conflict\",\"detail\":\"Conflict\"}}"}
     headers:
       Cache-Control: ['max-age=0, private, must-revalidate']
       Connection: [keep-alive]
@@ -25,5 +25,5 @@ interactions:
       X-Request-Id: [b3b34d43-5f81-44c3-9440-cb0a05db1a5c]
       X-Runtime: ['0.020862']
       content-length: ['63']
-    status: {code: 429, message: Too Many Requests}
+    status: {code: 409, message: Conflict}
 version: 1

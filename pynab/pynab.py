@@ -2,6 +2,7 @@ import requests
 
 import pynab.exceptions
 from pynab import models
+from pynab.exceptions import PynabConnectionError
 
 
 class Pynab:
@@ -25,7 +26,10 @@ class Pynab:
         :return: a user object of the currently authenticated user
         """
         path = Pynab.base_url + "user"
-        response = self.session.get(path)
+        try:
+            response = self.session.get(path)
+        except requests.exceptions.ConnectionError:
+            raise PynabConnectionError
         return models.PynabFactory.parse(response.json())
 
     def budgets_summary(self):

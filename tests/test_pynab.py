@@ -34,7 +34,6 @@ def test_user_object(ynab):
 def test_budgets_summary_list(ynab):
     """Tests an API call to get a summary list of all budgets"""
     budgets_summary = ynab.budgets_summary()
-
     assert isinstance(budgets_summary, list)
 
 
