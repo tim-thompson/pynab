@@ -1,9 +1,7 @@
 import requests
 
-import pynab.factory
+from pynab.factory import PynabFactory
 from pynab.exceptions import PynabAuthenticationError, PynabConnectionError
-from pynab import models
-
 
 class Pynab:
     base_url = "https://api.youneedabudget.com/v1/"
@@ -30,7 +28,7 @@ class Pynab:
             response = self.session.get(path)
         except requests.exceptions.ConnectionError:
             raise PynabConnectionError
-        return pynab.factory.PynabFactory.parse(response.json())
+        return PynabFactory.parse(response.json())
 
     def budgets_summary(self):
         """Gets a list containing a limited subset of information from each budget.
@@ -41,7 +39,7 @@ class Pynab:
         """
         path = Pynab.base_url + "budgets"
         response = self.session.get(path)
-        return pynab.factory.PynabFactory.parse(response.json())
+        return PynabFactory.parse(response.json())
 
     def budget(self, budget_id):
         """Gets a single budget by id
@@ -52,7 +50,7 @@ class Pynab:
         """
         path = Pynab.base_url + "budgets/" + budget_id
         response = self.session.get(path)
-        return pynab.factory.PynabFactory.parse(response.json(), budget_id)
+        return PynabFactory.parse(response.json(), budget_id)
 
     def budget_settings(self, budget_id):
         """Gets the settings for a single budget by id
@@ -63,4 +61,4 @@ class Pynab:
         """
         path = Pynab.base_url + "budgets/" + budget_id + "/settings"
         response = self.session.get(path)
-        return pynab.factory.PynabFactory.parse(response.json(), budget_id)
+        return PynabFactory.parse(response.json(), budget_id)
