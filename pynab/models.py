@@ -242,7 +242,7 @@ class Budget:
             for scheduled_subtransaction in data.get("scheduled_subtransactions")
         ]
 
-    def account(self, account_id):
+    def account(self, account_id: str):
         """Gets a single account by account id
 
         :rtype: pynab.models.Account
@@ -251,7 +251,7 @@ class Budget:
         """
         return get_from_list(self.accounts, "id", account_id)
 
-    def category(self, category_id):
+    def category(self, category_id: str):
         """Gets a single category by category id
 
         :rtype: pynab.models.Category
@@ -260,11 +260,11 @@ class Budget:
         """
         return get_from_list(self.categories, "id", category_id)
 
-    def update_category(self, category):
+    def update_category(self, category: str):
         # TODO: finish implementation
         pass
 
-    def payee(self, payee_id):
+    def payee(self, payee_id: str):
         """Gets a single payee by payee id
 
         :rtype: pynab.models.Payee
@@ -273,7 +273,7 @@ class Budget:
         """
         return get_from_list(self.payees, "id", payee_id)
 
-    def payee_location(self, payee_location_id):
+    def payee_location(self, payee_location_id: str):
         """Gets a single payee location by payee location id
 
         :rtype: pynab.models.PayeeLocation
@@ -282,7 +282,7 @@ class Budget:
         """
         return get_from_list(self.payee_locations, "id", payee_location_id)
 
-    def month(self, month):
+    def month(self, month: str):
         """Gets a single month by month id
 
         :rtype: pynab.models.Month
@@ -291,7 +291,7 @@ class Budget:
         """
         return get_from_list(self.months, "month", month)
 
-    def transaction(self, transaction_id):
+    def transaction(self, transaction_id: str):
         """Gets a single transaction by transaction id
 
         :rtype: pynab.models.Transaction
@@ -308,7 +308,7 @@ class Budget:
         # TODO: complete implementation
         pass
 
-    def scheduled_transaction(self, scheduled_transaction_id):
+    def scheduled_transaction(self, scheduled_transaction_id: str):
         """Gets a single scheduled transaction by scheduled transaction id
 
         :rtype: pynab.models.ScheduledTransaction
