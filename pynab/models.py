@@ -3,7 +3,9 @@ from dataclasses import dataclass
 
 # TODO: Handle iteration error better
 def get_from_list(list_search, key, value):
-    """Return the first element of a list where the key parameter of the list equals the value parameter."""
+    """Return the first element of a list where the key parameter
+    of the list equals the value parameter.
+    """
     return next(element for element in list_search if getattr(element, key) == value)
 
 
@@ -241,88 +243,77 @@ class Budget:
         ]
 
     def account(self, account_id):
-        """
+        """Gets a single account by account id
 
         :rtype: pynab.models.Account
-        :param account_id: 
-        :return: 
+        :param account_id: the UUID of the account to be retrieved
+        :return: a new account object
         """
         return get_from_list(self.accounts, "id", account_id)
 
     def category(self, category_id):
-        """
+        """Gets a single category by category id
 
         :rtype: pynab.models.Category
-        :param category_id: 
-        :return: 
+        :param category_id: the UUID of the category to be retrieved
+        :return: a new category object
         """
         return get_from_list(self.categories, "id", category_id)
 
     def update_category(self, category):
-        """
-
-        :rtype: object
-        :param category: 
-        """
+        # TODO: finish implementation
         pass
 
     def payee(self, payee_id):
-        """
+        """Gets a single payee by payee id
 
         :rtype: pynab.models.Payee
-        :param payee_id: 
-        :return: 
+        :param payee_id: the UUID of the payee to be retrieved
+        :return: a new payee object
         """
         return get_from_list(self.payees, "id", payee_id)
 
     def payee_location(self, payee_location_id):
-        """
+        """Gets a single payee location by payee location id
 
         :rtype: pynab.models.PayeeLocation
-        :param payee_location_id: 
-        :return: 
+        :param payee_location_id: the UUID of the payee location to be retrieved
+        :return: a new payee location object
         """
         return get_from_list(self.payee_locations, "id", payee_location_id)
 
     def month(self, month):
-        """
+        """Gets a single month by month id
 
         :rtype: pynab.models.Month
-        :param month: 
-        :return: 
+        :param month: the month to be returned
+        :return: a new month object
         """
         return get_from_list(self.months, "month", month)
 
     def transaction(self, transaction_id):
-        """
+        """Gets a single transaction by transaction id
 
         :rtype: pynab.models.Transaction
-        :param transaction_id: 
-        :return: 
+        :param transaction_id: the UUID of the transaction to be retrieved
+        :return: a new transaction object
         """
         return get_from_list(self.transactions, "id", transaction_id)
 
     def new_transaction(self):
-        """
-        :rtype: object
-
-        """
+        # TODO: complete implementation
         pass
 
     def update_transaction(self, transaction):
-        """
-
-        :rtype: object
-        :param transaction:
-        """
+        # TODO: complete implementation
         pass
 
     def scheduled_transaction(self, scheduled_transaction_id):
-        """
+        """Gets a single scheduled transaction by scheduled transaction id
 
         :rtype: pynab.models.ScheduledTransaction
-        :param scheduled_transaction_id:
-        :return:
+        :param scheduled_transaction_id: the UUID of the scheduled transaction to be retrieved
+        :return: a new scheduled transaction object
         """
         return get_from_list(
             self.scheduled_transactions, "id", scheduled_transaction_id
