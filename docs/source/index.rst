@@ -9,4 +9,5 @@ Pynab Documentation
    installation
    usage
    pynab
+   models
    exceptions
