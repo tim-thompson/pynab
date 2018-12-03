@@ -1,6 +1,6 @@
 Exceptions
 ==========
 
-.. automodule:: pynabh.exceptions
+.. automodule:: pynab.exceptions
     :members:
     :undoc-members:
