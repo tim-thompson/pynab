@@ -6,7 +6,7 @@ from pynab import Pynab, models
 pynab_vcr = vcr.VCR(
     serializer="yaml",
     decode_compressed_response=True,
-    cassette_library_dir="./tests/cassettes",
+    cassette_library_dir="./cassettes",
     filter_headers=["authorization"],
 )
 
@@ -18,13 +18,13 @@ def ynab():
     return ynab
 
 
-@pynab_vcr.use_cassette("./tests/cassettes/test_user_id")
+@pynab_vcr.use_cassette()
 def test_user_id(ynab):
     """Tests an API call to get information about authenticated user"""
     assert ynab.user.id == "string"
 
 
-@pynab_vcr.use_cassette("./tests/cassettes/test_user_object")
+@pynab_vcr.use_cassette()
 def test_user_object(ynab):
     """Tests the user object is being created as intended"""
     assert isinstance(ynab.user, models.User)
@@ -37,7 +37,7 @@ def test_budgets_summary_list(ynab):
     assert isinstance(budgets_summary, list)
 
 
-@pynab_vcr.use_cassette("./tests/cassettes/test_full_budget")
+@pynab_vcr.use_cassette("./cassettes/test_full_budget")
 def test_get_single_budget_full(ynab):
     """Tests an API call to get a full budget export of a single budget by ID"""
     budget = ynab.budget("string")
@@ -56,7 +56,7 @@ def test_get_single_budget_settings(ynab):
     assert settings.currency_format.display_symbol is True
 
 
-@pynab_vcr.use_cassette("./tests/cassettes/test_full_budget")
+@pynab_vcr.use_cassette("./cassettes/test_full_budget")
 def test_get_account_by_account_id_from_budget(ynab):
     """Tests that an account can be retrieved from a Budget object by ID"""
     budget = ynab.budget("string")
@@ -65,7 +65,7 @@ def test_get_account_by_account_id_from_budget(ynab):
     assert account.id == "string"
 
 
-@pynab_vcr.use_cassette("./tests/cassettes/test_full_budget")
+@pynab_vcr.use_cassette("./cassettes/test_full_budget")
 def test_get_category_by_category_id_from_budget(ynab):
     """Tests that a category can be retrieved from a Budget object by ID"""
     budget = ynab.budget("string")
@@ -74,7 +74,7 @@ def test_get_category_by_category_id_from_budget(ynab):
     assert category.id == "string"
 
 
-@pynab_vcr.use_cassette("./tests/cassettes/test_full_budget")
+@pynab_vcr.use_cassette("./cassettes/test_full_budget")
 def test_get_payee_by_payee_id_from_budget(ynab):
     """Tests that a payee can be retrieved from a Budget object by ID"""
     budget = ynab.budget("string")
@@ -83,7 +83,7 @@ def test_get_payee_by_payee_id_from_budget(ynab):
     assert payee.id == "string"
 
 
-@pynab_vcr.use_cassette("./tests/cassettes/test_full_budget")
+@pynab_vcr.use_cassette("./cassettes/test_full_budget")
 def test_get_payee_location_by_payee_location_id_from_budget(ynab):
     """Tests that a payee location can be retrieved from a Budget object by ID"""
     budget = ynab.budget("string")
@@ -92,7 +92,7 @@ def test_get_payee_location_by_payee_location_id_from_budget(ynab):
     assert payee_location.id == "string"
 
 
-@pynab_vcr.use_cassette("./tests/cassettes/test_full_budget")
+@pynab_vcr.use_cassette("./cassettes/test_full_budget")
 def test_get_month_by_month_from_budget(ynab):
     """Tests that a month can be retrieved from a Budget object by ID"""
     budget = ynab.budget("string")
@@ -101,7 +101,7 @@ def test_get_month_by_month_from_budget(ynab):
     assert month.month == "string"
 
 
-@pynab_vcr.use_cassette("./tests/cassettes/test_full_budget")
+@pynab_vcr.use_cassette("./cassettes/test_full_budget")
 def test_get_transaction_by_transaction_id_from_budget(ynab):
     """Tests that a transaction can be retrieved from a Budget object by ID"""
     budget = ynab.budget("string")
@@ -110,7 +110,7 @@ def test_get_transaction_by_transaction_id_from_budget(ynab):
     assert transaction.id == "string"
 
 
-@pynab_vcr.use_cassette("./tests/cassettes/test_full_budget")
+@pynab_vcr.use_cassette("./cassettes/test_full_budget")
 def test_get_scheduled_transaction_by_scheduled_transaction_id_from_budget(ynab):
     """Tests that a scheduled transaction can be retrieved from a Budget object by ID"""
     budget = ynab.budget("string")
