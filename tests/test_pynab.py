@@ -14,8 +14,8 @@ pynab_vcr = vcr.VCR(
 @pytest.fixture
 def ynab():
     """Setup an instance of Pynab"""
-    ynab = Pynab("auth_token")
-    return ynab
+    ynab_instance = Pynab("auth_token")
+    return ynab_instance
 
 
 @pynab_vcr.use_cassette()
