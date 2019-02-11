@@ -1,11 +1,16 @@
+import json
 from dataclasses import dataclass
 
+import pynab
+import pynab.exceptions
+import pynab.factory
 
-# TODO: Handle iteration error better
+
 def get_from_list(list_search, key, value):
     """Return the first element of a list where the key parameter
     of the list equals the value parameter.
     """
+    # TODO: Handle iteration error better
     return next(element for element in list_search if getattr(element, key) == value)
 
 
@@ -100,6 +105,33 @@ class Category:
 
 
 @dataclass
+class NewTransaction:
+    """Data Class to represent new transactions created by the user"""
+
+    account_id: str
+    date: str
+    amount: int
+    memo: str = None
+    cleared: str = None
+    approved: bool = None
+    flag_color: str = None
+    payee_id: str = None
+    category_id: str = None
+    transfer_account_id: str = None
+    transfer_transaction_id: str = None
+    matched_transaction_id: str = None
+    import_id: str = None
+    deleted: bool = None
+
+    def __post_init__(self):
+        if self.account_id in {None, ""} or self.amount in {None, ""} or self.date in {None, ""}:
+            print("post init")
+            raise pynab.exceptions.PynabError(
+                "Please provide a valid value for each mandatory field: account_id, date, amount"
+            )
+
+
+@dataclass
 class Transaction:
     """Data Class to represent Transaction data returned by YNAB API"""
 
@@ -117,6 +149,15 @@ class Transaction:
     transfer_transaction_id: str
     import_id: str
     deleted: bool
+    matched_transaction_id: str = None
+    account_name: str = None
+    payee_name: str = None
+    category_name: str = None
+    subtransactions: dict = None
+
+    def __post_init__(self):
+        if self.subtransactions is not None:
+            self.subtransactions = [Subtransaction(**subtransaction) for subtransaction in self.subtransactions]
 
 
 @dataclass
@@ -177,6 +218,7 @@ class Month:
     to_be_budgeted: int
     age_of_money: int
     categories: dict
+    deleted: bool = None
 
     def __post_init__(self):
         self.categories = [Category(**category) for category in self.categories]
@@ -189,27 +231,32 @@ class BudgetSummary:
     id: str
     name: str
     last_modified_on: str
-    date_format: str
+    date_format: dict
     currency_format: CurrencyFormat
+    first_month: str = None
+    last_month: str = None
+
+    def __post_init__(self):
+        self.date_format = self.date_format.get("format")
 
 
 class BudgetSettings:
     """Class to represent Budget Settings data returned from YNAB API"""
 
-    def __init__(self, budget_id, **data):
-        self.budget_id = budget_id
+    def __init__(self, **data):
         self.date_format = data.get("date_format").get("format")
         self.currency_format = CurrencyFormat(**data.get("currency_format"))
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.budget_id})"
+        return f"{self.__class__.__name__}"
 
 
 class Budget:
     """Class to represent Budget data returned from YNAB API"""
 
-    def __init__(self, budget_id, **data):
-        self.budget_id = budget_id
+    def __init__(self, requests_session, **data):
+        self.budget_id = data.get("id")
+        self.session = requests_session
         self.name = data.get("name")
         self.last_modified_on = data.get("last_modified_on")
         self.date_format = data.get("date_format").get("format")
@@ -300,9 +347,26 @@ class Budget:
         """
         return get_from_list(self.transactions, "id", transaction_id)
 
-    def new_transaction(self):
-        # TODO: complete implementation
-        pass
+    def create_transactions(self, new_transactions):
+        """Creates one or more transactions within a budget
+
+        :rtype: List[pynab.models.NewTransaction]
+        :param new_transactions: list of dicts representing each transaction
+        :return: a list of all transactions created
+        """
+        if new_transactions is None or len(new_transactions) == 0:
+            # TODO: Create proper exception for this
+            raise pynab.exceptions.PynabError
+
+        path = f"{pynab.Pynab._base_url}/budgets/{self.budget_id}/transactions"
+        data = {
+            "transactions": [
+                new_transaction.__dict__ for new_transaction in new_transactions
+            ]
+        }
+        print(data)
+        response = self.session.post(path, json=data)
+        return pynab.factory.PynabFactory.parse(response.json(), self.budget_id)
 
     def update_transaction(self, transaction):
         # TODO: complete implementation

@@ -17,7 +17,10 @@ class PynabAuthenticationError(PynabError):
 
 
 class PynabAccountError(PynabError):
-    """Exception raised when there is an error accessing the API due to a subscription or trial expiration"""
+    """
+    Exception raised when there is an error accessing the API
+    due to a subscription or trial expiration
+    s"""
 
     pass
 
