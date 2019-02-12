@@ -12,11 +12,10 @@ class Pynab:
     def __init__(self, access_token: str):
         if access_token is None or len(access_token) == 0:
             raise PynabAuthenticationError("No access token specified")
-        self._access_token = access_token
-        requests_session.headers.update({"Authorization": f"Bearer {self._access_token}"})
+        requests_session.headers.update({"Authorization": f"Bearer {access_token}"})
 
     def __repr__(self):
-        return f"Pynab(User ID: {self._access_token})"
+        return f"<Pynab Client>"
 
     @property
     def user(self):
