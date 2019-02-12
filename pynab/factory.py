@@ -1,3 +1,4 @@
+import pynab.pynab as pynab
 from pynab.models import User, BudgetSummary, Budget, BudgetSettings, Transaction
 
 from pynab.exceptions import (
@@ -11,7 +12,7 @@ from pynab.exceptions import (
     PynabInternalServerError,
 )
 
-errors = {
+parse_errors = {
     "bad_request": PynabBadRequestError(
         "YNAB returned a bad request. This is likely a Pynab bug, please report on GitHub"
     ),
@@ -36,57 +37,119 @@ errors = {
 }
 
 
-class PynabFactory:
-    def __init__(self, requests_session):
-        self.requests_session = requests_session
+def parse(json):
+    """
+    Client component for factory that accepts json returned from
+    the YNAB API and parses it to establish what is contained within
+    the response and create an appropriate object to represent the data
+    :param json: json in the form a dict to be parsed to an appropriate object
+    :return: Object created by parsing the json
+    """
+    if "error" in json:
+        _handle_error_response(json["error"])
 
-    def parse(self, json):
-        if "error" in json:
-            _handle_error_response(json["error"])
+    parser = _get_parser(json["data"])
+    return parser(json)
 
-        parser = self._get_parser(json["data"])
-        return parser(json)
 
-    def _get_parser(self, data_type):
-        if "user" in data_type:
-            return self._parse_user
-        elif "budgets" in data_type:
-            return self._parse_budgets
-        elif "budget" in data_type:
-            return self._parse_budget
-        elif "settings" in data_type:
-            return self._parse_settings
-        elif "transaction" in data_type:
-            return self._parse_transaction
-        elif "transactions" in data_type:
-            return self._parse_transactions
-        else:
-            # TODO: Create proper exception
-            raise PynabError("Unable to parse response from YNAB API")
+def _get_parser(data_type):
+    """
+    Creator component for factory that determines the type of data being
+    parsed and returns the correct function to use for parsing the data
+    :param data_type:
+    :return: the correct method for parsing the requested data type
+    """
+    if "user" in data_type:
+        return _parse_user
+    elif "budgets" in data_type:
+        return _parse_budgets
+    elif "budget" in data_type:
+        return _parse_budget
+    elif "settings" in data_type:
+        return _parse_settings
+    elif "transaction" in data_type:
+        return _parse_transaction
+    elif "transactions" in data_type:
+        return _parse_transactions
+    else:
+        # TODO: Create proper exception
+        raise PynabError("Unable to parse response from YNAB API")
 
-    def _parse_user(self, json):
-        return User(json["data"]["user"]["id"])
 
-    def _parse_budgets(self, json):
-        return [BudgetSummary(**summary) for summary in json["data"]["budgets"]]
+def _parse_user(json):
+    """
+    Product component for factory that creates a User object from user data
+    :rtype: pynab.models.User
+    :param json: json to be parsed to a User object
+    :return: user parsed from json
+    """
+    return User(json["data"]["user"]["id"])
 
-    def _parse_budget(self, json):
-        if self.requests_session is None:
-            # TODO: Decide if a new exception is required here
-            raise PynabError("Requests Session should not be none. Please raise an issue on Pynab Github")
-        return Budget(self.requests_session, **json["data"]["budget"])
 
-    def _parse_settings(self, json):
-        return BudgetSettings(**json["data"]["settings"])
+def _parse_budgets(json):
+    """
+    Product component for factory that creates a list of Budget Summary objects
+    from budget summary data
+    :rtype: List[pynab.models.BudgetSummary]
+    :param json:
+    :return: list of budget summaries parsed from json
+    """
+    return [BudgetSummary(**summary) for summary in json["data"]["budgets"]]
 
-    def _parse_transaction(self, json):
-        return Transaction(**json["data"]["transaction"])
 
-    def _parse_transactions(self, json):
-        return [Transaction(**transaction) for transaction in json["data"]["transactions"]]
+def _parse_budget(json):
+    """
+    Product component for factory that creates a Budget object from budget data
+    :rtype: pynab.models.Budget
+    :param json:
+    :return: budget parsed from json
+    """
+    if pynab.requests_session is None:
+        # TODO: Decide if a new exception is required here
+        raise PynabError("Requests Session should not be none. Please raise an issue on Pynab Github")
+    return Budget(pynab.requests_session, **json["data"]["budget"])
+
+
+def _parse_settings(json):
+    """
+    Product component for factory that creates a BudgetSettings object from
+    budget settings data
+    :rtype: pynab.models.Settings
+    :param json:
+    :return: budget settings parsed from json
+    """
+    return BudgetSettings(**json["data"]["settings"])
+
+
+def _parse_transaction(json):
+    """
+    Product component for factory that creates a Transaction object from
+    transaction data
+    :rtype: pynab.models.Transaction
+    :param json: 
+    :return: transaction parsed from json
+    """
+    return Transaction(**json["data"]["transaction"])
+
+
+def _parse_transactions(json):
+    """
+    Product component for factory that creates a list of Transaction objects
+    from transaction data
+    :rtype: List[pynab.models.Transaction]
+    :param json: 
+    :return: list of transactions parsed from json
+    """
+    return [Transaction(**transaction) for transaction in json["data"]["transactions"]]
+
 
 def _handle_error_response(error):
-    if error["name"] in errors:
-        raise errors.get(error["name"])
+    """
+    Grabs appropriate error from error dictionary based on error response in data
+    and raise an exception
+    :param error: the error data returned from the YNAB API
+    """
+    if error["name"] in parse_errors:
+        raise parse_errors.get(error["name"])
     else:
         raise PynabError("An unexpected error occurred")

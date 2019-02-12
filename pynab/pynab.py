@@ -1,7 +1,9 @@
 import requests
 
-from pynab.factory import PynabFactory
-from pynab.exceptions import PynabAuthenticationError, PynabConnectionError, PynabError
+from pynab.factory import parse
+from pynab.exceptions import PynabAuthenticationError, PynabConnectionError
+
+requests_session = requests.Session()
 
 
 class Pynab:
@@ -11,9 +13,7 @@ class Pynab:
         if access_token is None or len(access_token) == 0:
             raise PynabAuthenticationError("No access token specified")
         self._access_token = access_token
-        self._session = requests.Session()
-        self._session.headers.update({"Authorization": f"Bearer {access_token}"})
-        self._factory = PynabFactory(self._session)
+        requests_session.headers.update({"Authorization": f"Bearer {self._access_token}"})
 
     def __repr__(self):
         return f"Pynab(User ID: {self._access_token})"
@@ -27,10 +27,10 @@ class Pynab:
         """
         path = f"{self._base_url}/user"
         try:
-            response = self._session.get(path)
+            response = requests_session.get(path)
         except requests.exceptions.ConnectionError:
             raise PynabConnectionError
-        return self._factory.parse(response.json())
+        return parse(response.json())
 
     def budgets_list(self):
         """Gets a list containing a limited subset of information from each budget.
@@ -40,8 +40,8 @@ class Pynab:
         :return: a list containing summary information of each budget
         """
         path = f"{self._base_url}/budgets"
-        response = self._session.get(path)
-        return self._factory.parse(response.json())
+        response = requests_session.get(path)
+        return parse(response.json())
 
     def budget(self, budget_id):
         """Gets a single budget by id
@@ -51,8 +51,8 @@ class Pynab:
         :return: a new budget object
         """
         path = f"{self._base_url}/budgets/{budget_id}"
-        response = self._session.get(path)
-        return self._factory.parse(response.json())
+        response = requests_session.get(path)
+        return parse(response.json())
 
     def budget_settings(self, budget_id):
         """Gets the settings for a single budget by id
@@ -62,5 +62,5 @@ class Pynab:
         :return: a new budget settings object
         """
         path = f"{self._base_url}/budgets/{budget_id}/settings"
-        response = self._session.get(path)
-        return self._factory.parse(response.json())
+        response = requests_session.get(path)
+        return parse(response.json())
